@@ -34,6 +34,7 @@ public class GroupChatServer implements Runnable {
 
     @Override
     public void run() {
+        System.out.println("监听接收的线程：" + Thread.currentThread().getName());
         while (true) {
             try {
                 int count = selector.select();
@@ -42,12 +43,14 @@ public class GroupChatServer implements Runnable {
                     while (keys.hasNext()) {
                         SelectionKey key = keys.next();
                         if (key.isAcceptable()) {
+                            System.out.println("监听Acceptable的线程：" + Thread.currentThread().getName());
                             ServerSocketChannel serverChannel = (ServerSocketChannel) key.channel();
                             SocketChannel socketChannel = serverChannel.accept();
                             socketChannel.configureBlocking(false);
                             socketChannel.register(selector, SelectionKey.OP_READ);
                             System.out.println(socketChannel.getRemoteAddress() + "上线了");
                         } else if (key.isReadable()) {
+                            System.out.println("监听Readable的线程：" + Thread.currentThread().getName());
                             accept(key);
                         }
                         keys.remove();

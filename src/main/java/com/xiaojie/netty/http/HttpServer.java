@@ -8,6 +8,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
+import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.stream.ChunkedWriteHandler;
 
 import java.net.InetSocketAddress;
@@ -42,11 +43,14 @@ public class HttpServer {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             //新增两个解码器,否则会发生粘包和拆包问题
-                            socketChannel.pipeline().addLast("http-decoder", new HttpRequestDecoder());
+                           /* socketChannel.pipeline().addLast("http-decoder", new HttpRequestDecoder());
                             socketChannel.pipeline().addLast("http-aggregator", new HttpObjectAggregator(65536));
                             socketChannel.pipeline().addLast("http-encoder", new HttpResponseEncoder());
-                            socketChannel.pipeline().addLast("http-chunked", new ChunkedWriteHandler());
-                            socketChannel.pipeline().addLast("fileServerHandler", new HttpFileServerHandler(url));
+                            socketChannel.pipeline().addLast("http-chunked", new ChunkedWriteHandler());*/
+                            //处理http的编码解码器(也可以使用上面的处理器)
+                            socketChannel.pipeline().addLast("http-chunked", new HttpServerCodec());
+                            //socketChannel.pipeline().addLast("fileServerHandler", new HttpFileServerHandler(url));
+                            socketChannel.pipeline().addLast("fileServerHandler", new HttpServerHandler());
                         }
                     });
             ChannelFuture f = b.bind(new InetSocketAddress(port)).sync();

@@ -12,12 +12,13 @@ import java.net.URLDecoder;
 
 import static io.netty.handler.codec.http.HttpHeaderValues.KEEP_ALIVE;
 
-public class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+public class HttpFileServerHandler extends ChannelInboundHandlerAdapter {
     public HttpFileServerHandler(String url) {
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        FullHttpRequest request = (FullHttpRequest) msg;
         if (!request.decoderResult().isSuccess()) {
             //TODO
             return;

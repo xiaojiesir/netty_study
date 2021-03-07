@@ -37,16 +37,19 @@ public class NettyClient {
                             //新增两个解码器,否则会发生粘包和拆包问题
                             socketChannel.pipeline().addLast(new LineBasedFrameDecoder(1024));
                             socketChannel.pipeline().addLast(new StringDecoder());
-                            socketChannel.pipeline().addLast(new ChannelHandlerAdapter() {
+                            socketChannel.pipeline().addLast(new ChannelInboundHandlerAdapter() {
                                 //发送的消息条数,测试粘包
                                 private int count;
 
+                                //当通道就绪会触发该方法
                                 @Override
                                 public void channelActive(ChannelHandlerContext ctx) throws Exception {
+                                    System.out.println("client:" + ctx);
                                     String response = "QUERY TIME ORDER" + System.getProperty("line.separator");
                                     byte[] bytes = response.getBytes();
                                     ByteBuf message = null;
-                                    for (int i = 0; i < 100; i++) {
+                                    //测试粘包和拆包问题
+                                    for (int i = 0; i < 1; i++) {
                                         message = Unpooled.buffer(bytes.length);
                                         message.writeBytes(bytes);
                                         ctx.writeAndFlush(message);
@@ -54,6 +57,7 @@ public class NettyClient {
 
                                 }
 
+                                //当通道有读取事件时,触发该方法
                                 public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
                                    /* ByteBuf buf = (ByteBuf) msg;
                                     byte[] bytes = new byte[buf.readableBytes()];
