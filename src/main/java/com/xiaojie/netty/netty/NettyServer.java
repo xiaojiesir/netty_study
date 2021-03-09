@@ -52,8 +52,12 @@ public class NettyServer {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
-                    .option(ChannelOption.SO_BACKLOG, 1024) //设置线程队列得到连接个数
+                    //对应TCP/IP协议listen函数中的backlog参数,用来初始化服务器可连接队列大小.服务端处理请求是顺序处理的,
+                    // 同一时间只能处理一个客户端连接,多个客户端来的时候,服务端将不能处理的连接放在队列中等待处理,
+                    //SO_BACKLOG指定队列大小
+                    .option(ChannelOption.SO_BACKLOG, 1024)
                     .childOption(ChannelOption.SO_KEEPALIVE, true)//设置保持活动连接状态
+                    //.handler(null)//给bossGroup添加handler,childHandler为workerGroup的handler
                     .childHandler(new ChannelInitializer<SocketChannel>() {//创建一个通道测试对象
 
                         //给pipeline设置处理器
@@ -67,12 +71,13 @@ public class NettyServer {
 
                                 @Override
                                 public void channelRead(final ChannelHandlerContext ctx, Object msg) throws Exception {
+                                    //异步处理,不会阻塞
                                     ctx.channel().eventLoop().execute(new Runnable() {
                                         @Override
                                         public void run() {
                                             try {
                                                 Thread.sleep(10000);
-                                                ctx.writeAndFlush(Unpooled.copiedBuffer(("操作了十秒"+System.getProperty("line.separator")).getBytes()));
+                                                ctx.writeAndFlush(Unpooled.copiedBuffer(("操作了十秒" + System.getProperty("line.separator")).getBytes()));
                                             } catch (Exception e) {
                                                 e.printStackTrace();
 

@@ -1,12 +1,10 @@
-package com.xiaojie.netty.group;
+package com.xiaojie.netty.nio.group;
 
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
 import java.util.Iterator;
-import java.util.Set;
 
 public class GroupChatServer implements Runnable {
     private Selector selector;
