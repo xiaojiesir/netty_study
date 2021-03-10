@@ -1,4 +1,4 @@
-package com.xiaojie.netty.nio.group;
+package com.xiaojie.netty.nio.groupchat;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

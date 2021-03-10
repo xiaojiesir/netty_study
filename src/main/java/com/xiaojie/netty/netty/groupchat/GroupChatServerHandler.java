@@ -1,4 +1,4 @@
-package com.xiaojie.netty.netty.group;
+package com.xiaojie.netty.netty.groupchat;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
